@@ -1,12 +1,17 @@
-# Claude Session Memory
+# Kuato
 
-Search and query your Claude Code session history. Find what you discussed, what decisions you made, and where you left off.
+> **Quaid:** The same as you; to remember.
+> **Kuato:** But why?
+> **Quaid:** To be myself again.
+> **Kuato:** You are what you do. A man is defined by his actions, not his memory.
+
+Session memory for Claude Code. Find what you discussed, what decisions you made, and where you left off.
 
 ## The Problem
 
 Claude Code forgets everything between sessions. You're deep in a feature, close the tab, and the next day ask "where were we?" only to get a blank stare.
 
-This tool solves that by making your session history searchable.
+Kuato gives Claude access to what you *did* - the actions that define your work.
 
 ## Two Versions
 
@@ -29,8 +34,8 @@ Zero setup. Works directly with Claude Code's JSONL files.
 
 ```bash
 # Clone the repo
-git clone https://github.com/alexknowshtml/claude-session-memory.git
-cd claude-session-memory
+git clone https://github.com/alexknowshtml/kuato.git
+cd kuato
 
 # Search your sessions
 bun run file-based/search.ts --query "email system" --days 7
@@ -68,7 +73,7 @@ Output is JSON with all session metadata:
 One-command database setup, then sync and search.
 
 ```bash
-cd claude-session-memory/postgres
+cd kuato/postgres
 
 # Start PostgreSQL (creates database + schema)
 bun run db:up
@@ -265,7 +270,7 @@ Run sync every 15 minutes to keep the database current:
 
 ```bash
 # crontab -e
-*/15 * * * * cd /path/to/claude-session-memory/postgres && DATABASE_URL="..." bun run sync >> /var/log/session-sync.log 2>&1
+*/15 * * * * cd /path/to/kuato/postgres && DATABASE_URL="..." bun run sync >> /var/log/kuato-sync.log 2>&1
 ```
 
 ### Search Strategies

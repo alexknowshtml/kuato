@@ -1,7 +1,7 @@
 {
-  "name": "claude-session-memory",
+  "name": "kuato",
   "version": "0.1.0",
-  "description": "Search and query your Claude Code session history",
+  "description": "Open your mind. Session memory for Claude Code.",
   "type": "module",
   "scripts": {
     "search": "bun run file-based/search.ts",
@@ -14,12 +14,14 @@
     "ai",
     "sessions",
     "search",
-    "memory"
+    "memory",
+    "kuato",
+    "total-recall"
   ],
   "author": "Alex Hillman",
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/alexknowshtml/claude-session-memory"
+    "url": "https://github.com/alexknowshtml/kuato"
   }
 }

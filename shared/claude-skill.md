@@ -1,4 +1,6 @@
-# Session Search Skill
+# Kuato - Session Memory Skill
+
+*"Open your mind."*
 
 Use this skill when the user asks about previous sessions, what was discussed, or wants to resume work.
 
@@ -22,7 +24,7 @@ curl -s "http://localhost:3847/sessions?search=TOPIC&days=14&limit=5"
 
 **If using file-based search:**
 ```bash
-bun run /path/to/claude-session-memory/file-based/search.ts --query "TOPIC" --days 14
+bun run /path/to/kuato/file-based/search.ts --query "TOPIC" --days 14
 ```
 
 Also try file pattern if it's a code topic:
