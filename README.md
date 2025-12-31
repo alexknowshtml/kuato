@@ -1,15 +1,18 @@
 # Kuato
+
+Find what you discussed, what decisions you made, and where you left off.
+
+A simple, fully local session recall skill for Claude Code & other coding agents that support skills. 
+
+## The Problem
+
+Claude Code forgets everything between sessions. You're deep in a feature, close the tab, and the next day ask "where were we?" only to get a blank stare.
+
 > **Kuato:** What do you want, Mr. Quaid?   
 > **Quaid:** The same as you; to remember.   
 > **Kuato:** But why?   
 > **Quaid:** To be myself again.   
 > **Kuato:** You are what you do. A man is defined by his actions, not his memory.   
-
-Session memory for Claude Code. Find what you discussed, what decisions you made, and where you left off.
-
-## The Problem
-
-Claude Code forgets everything between sessions. You're deep in a feature, close the tab, and the next day ask "where were we?" only to get a blank stare.
 
 Kuato gives Claude access to what you *did* - the actions that define your work.
 
