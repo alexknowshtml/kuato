@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<!--
+    Kuato API Server LaunchAgent Template
+
+    BEFORE INSTALLING: Update all paths marked with TODO below.
+    See docs/launch-agent.md for detailed instructions.
+-->
+<plist version="1.0">
+<dict>
+    <key>Label</key>
+    <string>com.kuato.api</string>
+
+    <key>ProgramArguments</key>
+    <array>
+        <!-- TODO: Run 'which bun' and paste the result here -->
+        <string>/opt/homebrew/bin/bun</string>
+        <string>run</string>
+        <string>serve</string>
+    </array>
+
+    <!-- TODO: Update to your kuato/postgres directory -->
+    <key>WorkingDirectory</key>
+    <string>/path/to/kuato/postgres</string>
+
+    <key>EnvironmentVariables</key>
+    <dict>
+        <key>DATABASE_URL</key>
+        <!-- Use port 5432 for native PostgreSQL, 5433 for Docker -->
+        <string>postgres://claude:sessions@localhost:5432/claude_sessions</string>
+    </dict>
+
+    <key>RunAtLoad</key>
+    <true/>
+
+    <key>KeepAlive</key>
+    <true/>
+
+    <key>StandardOutPath</key>
+    <string>/tmp/kuato-api.log</string>
+
+    <key>StandardErrorPath</key>
+    <string>/tmp/kuato-api.error.log</string>
+</dict>
+</plist>
