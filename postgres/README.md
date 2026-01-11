@@ -2,7 +2,9 @@
 
 Full-featured session search with weighted full-text search, fuzzy matching, and an API server.
 
-## Quick Start
+## Quick Start (Docker)
+
+**Prerequisite:** [Docker Desktop](https://www.docker.com/products/docker-desktop/)
 
 ```bash
 # Start PostgreSQL
@@ -11,8 +13,41 @@ bun run db:up
 # Install dependencies
 bun install
 
-# Set database URL
+# Set database URL (Docker uses port 5433)
 export DATABASE_URL="postgres://claude:sessions@localhost:5433/claude_sessions"
+
+# Sync your sessions
+bun run sync
+
+# Start API server
+bun run serve
+```
+
+## Quick Start (Native)
+
+Alternative if you prefer not to use Docker.
+
+```bash
+# Install PostgreSQL via Homebrew (if not already installed)
+brew install postgresql@14
+
+# Start PostgreSQL
+brew services start postgresql@14
+
+# Create user and database
+psql postgres -c "CREATE USER claude WITH PASSWORD 'sessions';"
+psql postgres -c "CREATE DATABASE claude_sessions OWNER claude;"
+psql postgres -c "GRANT ALL PRIVILEGES ON DATABASE claude_sessions TO claude;"
+
+# Enable required extension and load schema
+psql -d claude_sessions -c "CREATE EXTENSION IF NOT EXISTS pg_trgm;"
+psql -U claude -d claude_sessions -f schema.sql
+
+# Install dependencies
+bun install
+
+# Set database URL (native uses default port 5432)
+export DATABASE_URL="postgres://claude:sessions@localhost:5432/claude_sessions"
 
 # Sync your sessions
 bun run sync
@@ -140,7 +175,7 @@ Add to crontab for automatic updates:
 */15 * * * * cd /path/to/postgres && DATABASE_URL="..." bun run sync >> /var/log/session-sync.log 2>&1
 ```
 
-## Database Management
+## Database Management (Docker)
 
 ```bash
 # Start database
@@ -156,6 +191,22 @@ bun run db:logs
 bun run db:down
 docker volume rm postgres_postgres_data
 bun run db:up
+```
+
+## Database Management (Native PostgreSQL)
+
+```bash
+# Start PostgreSQL
+brew services start postgresql@14
+
+# Stop PostgreSQL
+brew services stop postgresql@14
+
+# Reset database (delete all data)
+dropdb claude_sessions
+psql postgres -c "CREATE DATABASE claude_sessions OWNER claude;"
+psql -d claude_sessions -c "CREATE EXTENSION IF NOT EXISTS pg_trgm;"
+psql -U claude -d claude_sessions -f schema.sql
 ```
 
 ## Environment Variables

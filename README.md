@@ -21,7 +21,7 @@ Kuato gives Claude access to what you *did* - the actions that define your work.
 | Feature | File-Based | PostgreSQL |
 |---------|------------|------------|
 | **Setup time** | 0 minutes | 5 minutes |
-| **Dependencies** | Bun only | Bun + Postgres |
+| **Dependencies** | Bun only | Bun + Postgres (via Docker or native) |
 | **Search speed** | ~1-5 seconds | <100ms |
 | **Full-text search** | Basic matching | Weighted, ranked |
 | **Fuzzy matching** | No | Yes (trigram) |
@@ -71,9 +71,11 @@ Output is JSON with all session metadata:
 ]
 ```
 
-## Quick Start: PostgreSQL
+## Quick Start: PostgreSQL (Docker)
 
-One-command database setup, then sync and search.
+**Prerequisite:** [Docker Desktop](https://www.docker.com/products/docker-desktop/)
+
+One-command database setup, then sync and search. Docker uses port 5433 to avoid conflicts with native PostgreSQL installations.
 
 ```bash
 cd kuato/postgres
@@ -89,6 +91,77 @@ DATABASE_URL="postgres://claude:sessions@localhost:5433/claude_sessions" bun run
 
 # Start API server
 DATABASE_URL="postgres://claude:sessions@localhost:5433/claude_sessions" bun run serve
+```
+
+## Quick Start: PostgreSQL (Native)
+
+Alternative if you prefer not to use Docker.
+
+```bash
+# Install PostgreSQL via Homebrew (if not already installed)
+brew install postgresql@14
+
+# Start PostgreSQL
+brew services start postgresql@14
+
+# Create user and database
+psql postgres -c "CREATE USER claude WITH PASSWORD 'sessions';"
+psql postgres -c "CREATE DATABASE claude_sessions OWNER claude;"
+psql postgres -c "GRANT ALL PRIVILEGES ON DATABASE claude_sessions TO claude;"
+
+# Enable required extension and load schema
+psql -d claude_sessions -c "CREATE EXTENSION IF NOT EXISTS pg_trgm;"
+psql -U claude -d claude_sessions -f postgres/schema.sql
+
+# Install dependencies and sync
+cd kuato/postgres
+bun install
+DATABASE_URL="postgres://claude:sessions@localhost:5432/claude_sessions" bun run sync
+
+# Start API server
+DATABASE_URL="postgres://claude:sessions@localhost:5432/claude_sessions" bun run serve
+```
+
+**Note:** Native PostgreSQL uses the default port `5432`, while Docker uses `5433`. Adjust `DATABASE_URL` accordingly.
+
+## Understanding the Two Servers
+
+The PostgreSQL version requires **two separate servers** to be running:
+
+| Server | Port | What it does | Auto-starts? |
+|--------|------|--------------|--------------|
+| **PostgreSQL** | 5432 (native) or 5433 (Docker) | The database storing your sessions | Yes - via `brew services` or Docker |
+| **Kuato API** | 3847 | The REST API that queries the database | No - requires manual start or LaunchAgent |
+
+PostgreSQL stores the data; the Kuato API server (`bun run serve`) provides the REST endpoints that Claude uses to search your sessions.
+
+### Auto-starting the Kuato API (macOS)
+
+To have the API server start automatically on login, install the included LaunchAgent:
+
+```bash
+# Copy the plist (edit paths inside if your kuato install location differs)
+cp postgres/com.kuato.api.plist ~/Library/LaunchAgents/
+
+# Load it now
+launchctl load ~/Library/LaunchAgents/com.kuato.api.plist
+
+# Verify it's running
+curl "http://localhost:3847/health"
+```
+
+To manage the LaunchAgent:
+
+```bash
+# Stop the API server
+launchctl unload ~/Library/LaunchAgents/com.kuato.api.plist
+
+# Start it again
+launchctl load ~/Library/LaunchAgents/com.kuato.api.plist
+
+# View logs
+tail -f /tmp/kuato-api.log
+tail -f /tmp/kuato-api.error.log
 ```
 
 Then query the API:
